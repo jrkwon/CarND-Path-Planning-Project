@@ -122,7 +122,7 @@ Based upon these three boolean variables, I can slow down if the car is ahead an
 
 ## Result
 
-![output](https://youtu.be/ZtRIu6IAJF0)
+[![output](https://img.youtube.com/vt/ZtRIu6IAJF0/0.jpg)](https://youtu.be/ZtRIu6IAJF0)
 
 ---
 
