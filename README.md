@@ -1,14 +1,139 @@
+[//]: # (image references)
+[screenshot]: ./image/Screenshot.png 
+
+# CarND-Path-Planning-Project
+
+## Introduction
+
+The project goal is to design a path planner that is able to create smooth and safe paths for the ego car to follow along a three lane highway with other cars. The path planner must keep inside its lane as the ego car does not exceed the maximum speed, does not collide other cars and is able to change lanes smoothly to pass slower traffic without having jerks or sudden acceleration/braking.
+
+## Implementation
+
+Here is how I address the rubric points.
+
+### At least 4.32 miles without incident
+
+With all describe below, the ego car can drive more than 4.32 miles without any incident.
+
+![screen shot](image/Screenshot.png)
+
+### The car drives according to the speed limit.
+
+I set the maximum velocity 49.5 mph and increase the current speed by 0.224 mph when necessary only if the speed is not over the maximum velocity. By doing so, the ego car's speed cannot exceed the speed limit. Also the ego car's speed is slowing down when traffic is obstructed by 0.224 mph.
+
+### Max Acceleration and Jerk are not Exceeded.
+
+By applying a slow step up and step down the ego car's speed, the car does not exceed the max acceleration and jerk. 
+
+### Car does not have collisions.
+
+The ego car does not contact with any other cars by applying my lane change policy that is described below.
+
+### The car stays in its lane, except for the time between changing lanes.
+
+The car doesn't spend more than a 3 second length out side the lane lanes during changing lanes, and every other time the car stays inside one of the 3 lanes on the right hand side of the road.
+
+### The car is able to change lanes
+
+The car is able to smoothly change lanes when it makes sense to do so, such as when behind a slower moving car and an adjacent lane is clear of other traffic. 
+
+Three boolean variables are introduced: ``is_car_ahead, is_car_left, is_car_right`` from line 275 ~ 279.
+
+```
+            // ---------------------------
+            // Check other cars' positions
+            bool is_car_ahead = false;
+            bool is_car_left = false;
+            bool is_car_right = false;
+```
+
+There are as many of cars as the size of ``sensor_fusion`` data. I have to check all these cars. I get the positions of cars using Frenet's ``s`` coordinate value.
+
+First, get a lane of each of other cars. See line 283 ~ 291.
+
+```
+                int check_lane = -1;
+
+                // get a car's lane.
+                for (int l = 0; l < NUM_LANES; l++) {
+                    if (d >= l*LANE_WIDTH && d <= (l+1)*LANE_WIDTH) {
+                        check_lane = l;
+                        break;
+                    }
+                }
+```
+
+
+Once I find out the car's lane, I can tell the car is ahead, left, or right of the ego car based upon difference between the ego car's lane and another car's lane. If they are in the same lane, I have to check if the ego car is in a certain range from the other car. The range that I used is 30 meters. If they are in a different lane, I can tell the other car is left or right based on the difference of the ego car's lane and the others. In either case, I need to check not only a car ahead but also behind since this can be used to determine the lane change behavior. Again, I used 30 meters range to decide that the other car is ahead of the ego car in left or right lane and behind of the ego car. See line 303 ~ 316.
+
+```
+                if (lane == check_lane) {
+                    // if a car is in my lane,
+                    is_car_ahead |= (car_s < check_car_s && ((check_car_s - car_s) < NUM_SPACED_POINTS));
+                }
+                else if ((check_lane - lane) == -1) {
+                    // this car is one lane left from my car.
+                    is_car_left |= (car_s < check_car_s + NUM_SPACED_POINTS) 
+                                    && (car_s > check_car_s - NUM_SPACED_POINTS);
+                }
+                else if ((check_lane - lane) == 1) {
+                    // this car is one lane right from my car
+                    is_car_right |= (car_s < check_car_s + NUM_SPACED_POINTS) 
+                                    && (car_s > check_car_s - NUM_SPACED_POINTS);
+                }
+```
+
+Based upon these three boolean variables, I can slow down if the car is ahead and there is no way to change lanes. If a car is ahead of the ego car and there is enough room in left or right lane, lane change is happening. If there is no car ahead, then as I described earlier, the ego car's speed is increasing by 0.224 mph. See line 319 ~ 350.
+
+```
+            // -------------------------
+            // Slow down or change lanes
+            if (is_car_ahead) {
+                if (lane > 0 && !is_car_left) {
+                    // change lane to left
+                    lane--;
+                }
+                else if (!is_car_right && lane != (NUM_LANES-1)) {
+                    // change to right
+                    lane++;
+                }
+                else {
+                    // if you can't change lane, slow down
+                    ref_vel -= DIFF_VEL;
+                }
+            }
+            else {
+                // no car is ahead in 30m range
+                if (ref_vel < MAX_VEL) {
+                    // then speed up
+                    ref_vel += DIFF_VEL;
+                }
+                // // let's use the center line if possible
+                // if (lane > 0 && !is_car_left) {
+                //     // change lane to left
+                //     lane--;
+                // }
+                // else if (!is_car_right && lane != (NUM_LANES-1)) {
+                //     // change to right
+                //     lane++;
+                // }
+            }
+```
+
+## Result
+
+![output](https://youtu.be/ZtRIu6IAJF0)
+
+---
+
+The description below is Udacity's original README for this project repository.
+
+----
+
 # CarND-Path-Planning-Project
 
 Self-Driving Car Engineer Nanodegree Program
    
-
-
-
-From here, I put the original README of the Udacity project. 
----
-
-
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases/tag/T3_v1.2).
 

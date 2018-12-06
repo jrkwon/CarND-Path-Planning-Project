@@ -164,7 +164,7 @@ const int LANE_WIDTH = 4;
 const int LANE_HALF_WIDTH = LANE_WIDTH/2;
 const int NUM_SPACED_POINTS = 30;  // meters
 const int START_LANE = 1;          // lane number. 0, 1, ... from left
-const double REF_VEL = 49.5;       // ref velocity in mph
+const double MAX_VEL = 49.5;       // max velocity in mph
 const double INIT_VEL = 0.0;       // initial velocity in mph
 const double DIFF_VEL = 0.224;     // single change of ref vel in mph (~5 m/s^2)
 
@@ -334,7 +334,7 @@ int main() {
             }
             else {
                 // no car is ahead in 30m range
-                if (ref_vel < REF_VEL) {
+                if (ref_vel < MAX_VEL) {
                     // then speed up
                     ref_vel += DIFF_VEL;
                 }
