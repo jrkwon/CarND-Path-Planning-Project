@@ -15,7 +15,7 @@ Here is how I address the rubric points.
 
 With all describe below, the ego car can drive more than 4.32 miles without any incident.
 
-![screen shot](image/Screenshot.png)
+![screen shot](image/Screenshot_result.png)
 
 ### The car drives according to the speed limit.
 
@@ -122,7 +122,7 @@ Based upon these three boolean variables, I can slow down if the car is ahead an
 
 ## Result
 
-[![output](https://img.youtube.com/vt/ZtRIu6IAJF0/0.jpg)](https://youtu.be/ZtRIu6IAJF0)
+[![output](https://img.youtube.com/vi/ZtRIu6IAJF0/0.jpg)](https://youtu.be/ZtRIu6IAJF0)
 
 ---
 
