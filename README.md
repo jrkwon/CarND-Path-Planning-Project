@@ -5,7 +5,7 @@
 
 ## Introduction
 
-The project goal is to design a path planner that is able to create smooth and safe paths for the ego car to follow along a three lane highway with other cars. The path planner must keep inside its lane as the ego car does not exceed the maximum speed, does not collide other cars and is able to change lanes smoothly to pass slower traffic without having jerks or sudden acceleration/braking.
+The project goal is to design a path planner that can create smooth and safe paths for the ego car to follow along a three-lane highway with other cars. The path planner must keep inside its lane as the ego car does not exceed the maximum speed, does not collide other cars and can change lanes smoothly to pass slower traffic without having jerks or sudden acceleration/braking.
 
 ## Implementation
 
@@ -19,7 +19,7 @@ With all describe below, the ego car can drive more than 4.32 miles without any 
 
 ### The car drives according to the speed limit.
 
-I set the maximum velocity 49.5 mph and increase the current speed by 0.224 mph when necessary only if the speed is not over the maximum velocity. By doing so, the ego car's speed cannot exceed the speed limit. Also the ego car's speed is slowing down when traffic is obstructed by 0.224 mph.
+I set the maximum velocity 49.5 mph and increase the current speed by 0.224 mph when necessary only if the speed is not over the maximum velocity. By doing so, the ego car's speed cannot exceed the speed limit. Also, the ego car's speed is slowing down by 0.224 mph when traffic is obstructed. 
 
 ### Max Acceleration and Jerk are not Exceeded.
 
@@ -31,7 +31,7 @@ The ego car does not contact with any other cars by applying my lane change poli
 
 ### The car stays in its lane, except for the time between changing lanes.
 
-The car doesn't spend more than a 3 second length out side the lane lanes during changing lanes, and every other time the car stays inside one of the 3 lanes on the right hand side of the road.
+The car doesn't spend more than a 3-second length outside the lane lanes while changing lanes, and every other time the car stays inside one of the 3 lanes on the right-hand side of the road.
 
 ### The car is able to change lanes
 
@@ -47,7 +47,7 @@ Three boolean variables are introduced: ``is_car_ahead, is_car_left, is_car_righ
             bool is_car_right = false;
 ```
 
-There are as many of cars as the size of ``sensor_fusion`` data. I have to check all these cars. I get the positions of cars using Frenet's ``s`` coordinate value.
+There are as many cars as the size of ``sensor_fusion`` data. I have to check all these cars. I get the positions of cars using Frenet's ``s`` coordinate value.
 
 First, get a lane of each of other cars. See line 283 ~ 291.
 
@@ -64,7 +64,7 @@ First, get a lane of each of other cars. See line 283 ~ 291.
 ```
 
 
-Once I find out the car's lane, I can tell the car is ahead, left, or right of the ego car based upon difference between the ego car's lane and another car's lane. If they are in the same lane, I have to check if the ego car is in a certain range from the other car. The range that I used is 30 meters. If they are in a different lane, I can tell the other car is left or right based on the difference of the ego car's lane and the others. In either case, I need to check not only a car ahead but also behind since this can be used to determine the lane change behavior. Again, I used 30 meters range to decide that the other car is ahead of the ego car in left or right lane and behind of the ego car. See line 303 ~ 316.
+Once I find out the car's lane, I can tell the car is ahead, left, or right of the ego car based upon the difference between the ego car's lane and another car's lane. If they are in the same lane, I have to check if the ego car is in a certain range from the other car. The range that I used is 30 meters. If they are in a different lane, I can tell the other car is left or right based on the difference of the ego car's lane and the others. In either case, I need to check not only a car ahead but also behind since this can be used to determine the lane change behavior. Again, I used 30 meters range to decide that the other car is ahead of the ego car in left or right lane and behind of the ego car. See line 303 ~ 316.
 
 ```
                 if (lane == check_lane) {
@@ -83,7 +83,7 @@ Once I find out the car's lane, I can tell the car is ahead, left, or right of t
                 }
 ```
 
-Based upon these three boolean variables, I can slow down if the car is ahead and there is no way to change lanes. If a car is ahead of the ego car and there is enough room in left or right lane, lane change is happening. If there is no car ahead, then as I described earlier, the ego car's speed is increasing by 0.224 mph. See line 319 ~ 350.
+Based upon these three boolean variables, I can slow down if the car is ahead and there is no way to change lanes. If a car is ahead of the ego car and there is enough room in the left or right lane, lane-change is happening. If there is no car ahead, then as I described earlier, the ego car's speed is increasing by 0.224 mph. See line 319 ~ 350.
 
 ```
             // -------------------------
